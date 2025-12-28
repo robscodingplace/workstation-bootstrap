@@ -60,41 +60,12 @@ ensure_ssh_key() {
     info "SSH key already exists: $keyfile"
   else
     info "Generating SSH key (ed25519)."
-    # -N "" would create no passphrase (not recommended). We'll prompt if TTY.
-    if [[ -t 0 ]]; then
-      ssh-keygen -t ed25519 -a 64 -C "workstation-$(date +%Y-%m-%d)" -f "$keyfile"
-    else
-      warn "No TTY detected; generating key with empty passphrase is NOT recommended."
-      warn "Re-run interactively to set a passphrase: ssh-keygen -t ed25519 -a 64"
-      ssh-keygen -t ed25519 -a 64 -C "workstation-$(date +%Y-%m-%d)" -f "$keyfile" -N ""
-    fi
+    ssh-keygen -t ed25519 -a 64 -C "workstation-$(date +%Y-%m-%d)" -f "$keyfile"
   fi
 
   info "Your public key (add to GitHub → Settings → SSH and GPG keys):"
   cat "${keyfile}.pub"
   echo
-}
-
-clone_repo_https() {
-  if [[ -d "$TARGET_DIR/.git" ]]; then
-    info "Repo already cloned at: $TARGET_DIR"
-    return
-  fi
-
-  info "Cloning repo via HTTPS (works even before SSH is configured)..."
-  git clone "$REPO_HTTPS" "$TARGET_DIR"
-}
-
-switch_remote_to_ssh() {
-  info "Optionally switching origin remote to SSH:"
-  info "  $REPO_SSH"
-
-  if [[ -d "$TARGET_DIR/.git" ]]; then
-    (cd "$TARGET_DIR" && git remote set-url origin "$REPO_SSH")
-    info "Origin remote switched to SSH."
-  else
-    warn "Repo not found at $TARGET_DIR; cannot switch remote."
-  fi
 }
 
 next_steps() {
