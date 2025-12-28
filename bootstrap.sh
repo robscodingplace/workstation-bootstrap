@@ -60,7 +60,7 @@ ensure_ssh_key() {
     info "SSH key already exists: $keyfile"
   else
     info "Generating SSH key (ed25519)."
-    ssh-keygen -t ed25519 -a 64 -C "workstation-$(date +%Y-%m-%d)" -f "$keyfile"
+    ssh-keygen -t ed25519 -a 64 -C "workstation-$(date +%Y-%m-%d)" -f "$keyfile" < /dev/tty
   fi
 
   info "Your public key (add to GitHub → Settings → SSH and GPG keys):"
